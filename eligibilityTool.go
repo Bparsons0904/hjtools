@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/charmbracelet/bubbles/filepicker"
@@ -30,11 +29,8 @@ type EligibilityFileTool struct {
 	err          error
 }
 
-func NewEligibilityFileTool() *EligibilityFileTool {
-	picker := filepicker.New()
-	picker.AllowedTypes = []string{"psv"}
-	picker.CurrentDirectory, _ = os.UserHomeDir()
-
+// EligibilityFileTool should be able to take a filepicker.Model directly
+func NewEligibilityFileTool(picker filepicker.Model) *EligibilityFileTool {
 	return &EligibilityFileTool{
 		picker:       picker,
 		currentStage: MenuStage,
@@ -76,7 +72,10 @@ func (m *EligibilityFileTool) updateMenu(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch m.menuCursor {
 		case ConvertToCSVOption:
 			m.currentStage = FilePickerStage
-			// Attempt to reinitialize the file picker to ensure it is in a ready state.
+			// picker := filepicker.New()
+			// picker.AllowedTypes = []string{"psv"}
+			// picker.CurrentDirectory, _ = os.UserHomeDir()
+			// m.picker = picker
 			return m, nil
 		case BackOption:
 			// Handle the back option if necessary

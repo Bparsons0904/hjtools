@@ -5,18 +5,29 @@ import (
 	"os"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/filepicker"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
 	currentModule tea.Model
+	filepicker    filepicker.Model
 }
 
 func main() {
-	initialModel := model{currentModule: NewMainMenu()}
+	fp := filepicker.New()
+	fp.CurrentDirectory, _ = os.UserHomeDir()
+
+	// Create the initial model, setting the filepicker before passing the model to NewMainMenu
+	initialModel := &model{ // Make sure initialModel is a pointer to model
+		filepicker: fp,
+	}
+
+	// Now pass initialModel to NewMainMenu, which needs a reference to model
+	initialModel.currentModule = NewMainMenu(initialModel)
+
 	p := tea.NewProgram(initialModel)
 	if _, err := p.Run(); err != nil {
-
 		fmt.Println("Error starting program:", err)
 		os.Exit(1)
 	}

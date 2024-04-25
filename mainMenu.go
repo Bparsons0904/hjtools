@@ -9,11 +9,14 @@ import (
 type MainMenu struct {
 	cursor int
 	menu   []string
+	parent *model // Add a reference to the parent model
 }
 
-func NewMainMenu() tea.Model {
+// Update the constructor to accept a reference to the parent model
+func NewMainMenu(parent *model) tea.Model {
 	return &MainMenu{
-		menu: []string{"Eligibility File Tool", "Quit"},
+		menu:   []string{"Eligibility File Tool", "Quit"},
+		parent: parent,
 	}
 }
 
@@ -31,7 +34,9 @@ func (m MainMenu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			switch m.cursor {
 			case 0:
-				return &EligibilityFileTool{}, nil
+				// Now correctly create the EligibilityFileTool using the filepicker from the parent model
+				eligibilityTool := NewEligibilityFileTool(m.parent.filepicker)
+				return eligibilityTool, nil
 			case 1:
 				fmt.Println("Exiting program.")
 				return m, tea.Quit
